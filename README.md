@@ -185,7 +185,7 @@ Developed by [HeWeDe](https://github.com/HeWeDe) with support from ChatGPT 🤖
 
 ## 📁 Beispiele
 
-Im Ordner [`examples/`](./examples) findest du praktische Konfigurationsbeispiele aus einem produktiven Home Assistant-Setup:
+Im Ordner [`example/`](./example) findest du praktische Konfigurationsbeispiele aus einem produktiven Home Assistant-Setup:
 
 | Datei              | Inhalt                                                                 |
 |-------------------|------------------------------------------------------------------------|
