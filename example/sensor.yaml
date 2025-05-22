@@ -1,0 +1,43 @@
+#Load Power
+- platform: statistics
+  name: Load Power Mittelwert
+  entity_id: sensor.load_power
+  state_characteristic: mean
+  max_age:
+    hours: 1
+
+- platform: statistics
+  name: Load Power Minimum
+  entity_id: sensor.load_power
+  state_characteristic: value_min
+  max_age:
+    hours: 1
+
+- platform: statistics
+  name: Load Power Maximum
+  entity_id: sensor.load_power
+  state_characteristic: value_max
+  max_age:
+    hours: 1
+
+#Akku Power
+- platform: statistics
+  name: Akku Power Mittelwert
+  entity_id: sensor.battery_power
+  state_characteristic: mean
+  max_age:
+    hours: 1
+
+- platform: statistics
+  name: Akku Power Minimum
+  entity_id: sensor.battery_power
+  state_characteristic: value_min
+  max_age:
+    hours: 1
+
+- platform: statistics
+  name: Akku Power Maximum
+  entity_id: sensor.battery_power
+  state_characteristic: value_max
+  max_age:
+    hours: 1

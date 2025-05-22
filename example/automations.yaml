@@ -1,0 +1,99 @@
+#Akku Kapazität messen
+  mode: single
+- id: "1745838377185"
+  alias: Akku Kapazität Messung Start
+  description: ""
+  triggers:
+    - at: "20:00:00"
+      trigger: time
+  actions:
+    - data:
+        entity_id: input_number.akkukapazitaet_soc_start
+        value: "{{ states('sensor.solar_inverter1_battery_soc') | float }}"
+      action: input_number.set_value
+    - data:
+        entity_id: input_number.akkukapazitaet_verbrauch_start
+        value: "{{ states('sensor.gesamte_akku_entladung') | float }}"
+      action: input_number.set_value
+    - data:
+        entity_id: input_datetime.akkukapazitaet_startzeit
+        datetime: "{{ now().isoformat() }}"
+      action: input_datetime.set_datetime
+- id: "1745838407467"
+  alias: Akku Kapazität prüfen
+  description: ""
+  triggers:
+    - trigger: time_pattern
+      minutes: /5
+  conditions:
+    - condition: template
+      value_template:
+        "{{ (states('input_number.akkukapazitaet_soc_start') | float)
+        -\n   (states('sensor.solar_inverter1_battery_soc') | float) >= 50 }}"
+  actions:
+    - variables:
+        verbrauch_start:
+          "{{ states('input_number.akkukapazitaet_verbrauch_start')
+          | float }}"
+        verbrauch_now: "{{ states('sensor.gesamte_akku_entladung') | float }}"
+        kapazitaet: "{{ ((verbrauch_now - verbrauch_start) * 2) | round(2) }}"
+    - data:
+        entity_id: input_number.akkukapazitat_letzter_wert
+        value: "{{ kapazitaet }}"
+      action: input_number.set_value
+    - data:
+        entity_id: input_number.akkukapazitaet_log_wert
+        value: "{{ kapazitaet }}"
+      action: input_number.set_value
+    - data:
+        entity_id: input_text.akkukapazitaet_log
+        value: "{{ now().strftime('%Y-%m-%d') }}: {{ kapazitaet }} kWh"
+      action: input_text.set_value
+    - data:
+        title: Akkukapazität gemessen
+        message: Akkukapazität beträgt etwa {{ kapazitaet }} kWh.
+      action: persistent_notification.create
+      enabled: false
+    - data:
+        entity_id: input_number.akkukapazitaet_soc_start
+        value: 0
+      action: input_number.set_value
+    - data:
+        entity_id: input_number.akkukapazitaet_verbrauch_start
+        value: 0
+      action: input_number.set_value
+    - data:
+        entity_id: input_datetime.akkukapazitaet_startzeit
+        datetime: "1970-01-01T00:00:00"
+      action: input_datetime.set_datetime
+- id: "1745838442867"
+  alias: Akku Kapazität Messung Abbruch
+  description:
+    Bricht die Kapazitätsmessung ab, wenn bis 05:00 nicht 50 % Entladung
+    erreicht wurden und setzt die Startwerte zurück.
+  triggers:
+    - trigger: time
+      at: 05:00:00
+  conditions:
+    - condition: template
+      value_template:
+        "{{ (states('input_number.akkukapazitaet_soc_start') | float)
+        -\n   (states('sensor.solar_inverter1_battery_soc') | float) < 50 }}"
+  actions:
+    - data:
+        title: Akkukapazität Messung
+        message: Messung abgebrochen, SOC ist nicht um 50 % gesunken.
+      action: persistent_notification.create
+      enabled: false
+    - data:
+        entity_id: input_number.akkukapazitaet_soc_start
+        value: 0
+      action: input_number.set_value
+    - data:
+        entity_id: input_number.akkukapazitaet_verbrauch_start
+        value: 0
+      action: input_number.set_value
+    - data:
+        entity_id: input_datetime.akkukapazitaet_startzeit
+        datetime: "1970-01-01T00:00:00"
+      action: input_datetime.set_datetime
