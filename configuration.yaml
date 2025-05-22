@@ -1,0 +1,5 @@
+.......
+
+automation: !include automations.yaml
+sensor: !include sensor.yaml
+template: !include template.yaml
