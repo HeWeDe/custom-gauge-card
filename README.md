@@ -182,3 +182,16 @@ Developed by [HeWeDe](https://github.com/HeWeDe) with support from ChatGPT 🤖
 * `mini-graph-card`
 * `apexcharts-card`
 * `button-card`
+
+## 📁 Beispiele
+
+Im Ordner [`examples/`](./examples) findest du praktische Konfigurationsbeispiele aus einem produktiven Home Assistant-Setup:
+
+| Datei              | Inhalt                                                                 |
+|-------------------|------------------------------------------------------------------------|
+| `configuration.yaml` | Basis-Setup mit Includes für Sensoren, Templates, Automationen       |
+| `sensor.yaml`         | Statistiksensoren für Verbrauch, Akku und mehr                       |
+| `template.yaml`       | Beispielhafte Berechnung der Inverter-Verlustleistung                |
+| `automations.yaml`    | Automatisierung zur Berechnung der tatsächlichen Akkukapazität       |
+
+Alle Beispiele sind sofort nutzbar oder leicht anpassbar.
