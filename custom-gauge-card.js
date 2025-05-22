@@ -20,8 +20,8 @@ const DEFAULTS = {
   decimals: 3,                    // Nachkommastellen für den **aktuellen Wert** (Mitte der Gauge)
 
   min_color: "blue",              // Farbe des Min-Markers (kleine Linie + Zahl)
-  max_color: "red",               // Farbe des Max-Markers
-  avg_color: "orange",            // Farbe des Durchschnitts-Markers
+  max_color: "darkred",           // Farbe des Max-Markers
+  avg_color: "darkorange",            // Farbe des Durchschnitts-Markers
 
   stat_decimals: 1,               // Nachkommastellen für Min/Max/Avg-Werte (Marker-Beschriftung)
   markers_width: 2,               // Linienstärke der Min/Max/Avg-Marker
@@ -185,7 +185,7 @@ class CustomGaugeCard extends LitElement {
     return html`
       <div style="position: relative; width: 100%; padding-bottom: 75%;">
         <svg viewBox="0 0 240 180" style="position: absolute; width: 100%; height: 100%; top: 7%; left: 0;">
-          ${paths} ${ticks} ${needle} ${statMarkers}
+          ${paths} ${ticks} ${statMarkers} ${needle}
           <text x="${cx}" y="${cfg.titel_font_size}" text-anchor="middle" font-size="${cfg.titel_font_size}" font-weight="bold">${name}</text>
           <text x="${cx}" y="${cy + 10}" text-anchor="middle" font-size="${cfg.value_font_size}" font-weight="bold">${formattedValue} ${unit}</text>
           <text x="${leftPos.x}" y="${leftPos.y}" text-anchor="middle" font-size="${cfg.rltext_font_size}">${cfg.leftText}</text>
