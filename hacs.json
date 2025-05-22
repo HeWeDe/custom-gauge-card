@@ -2,5 +2,4 @@
   "name": "Custom Gauge Card",
   "render_readme": true,
   "filename": "custom-gauge-card.js",
-  "type": "module"
 }
