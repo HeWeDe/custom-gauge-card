@@ -171,7 +171,7 @@ Feel free to fork and improve this card. If you find it useful, a ⭐️ would b
 
 ## Credits
 
-Developed by [Martin Heinrich](https://github.com/martinheinrich) with support from ChatGPT 🤖
+Developed by [HeWeDe](https://github.com/HeWeDe) with support from ChatGPT 🤖
 
 ---
 
