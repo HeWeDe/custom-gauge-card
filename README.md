@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 # Custom Gauge Card for Home Assistant
 
 A highly configurable and visually appealing SVG gauge card for Home Assistant dashboards, built with LitElement.
