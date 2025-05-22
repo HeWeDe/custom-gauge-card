@@ -1,5 +1,11 @@
 {
   "name": "Custom Gauge Card",
   "render_readme": true,
-  "filename": "custom-gauge-card.js",
+  "description": "An extensible SVG gauge card for Home Assistant with min/max/avg markers.",
+  "resources": [
+    {
+      "type": "module",
+      "url": "https://github.com/HeWeDe/custom-gauge-card/releases/latest/download/custom-gauge-card.js"
+    }
+  ]
 }
