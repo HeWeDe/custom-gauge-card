@@ -2,9 +2,12 @@
   "name": "Custom Gauge Card",
   "filename": "custom-gauge-card.js",
   "type": "module",
+  "description": "An extensible SVG gauge for Home Assistant with min/max/avg markers.",
   "render_readme": true,
-  "description": "An SVG-based gauge card for Home Assistant with min/max/avg markers.",
+  "domains": ["lovelace"],
   "authors": ["HeWeDe"],
-  "keywords": ["gauge", "lovelace", "home assistant"],
-  "version": "1.0.0"
+  "branding": {
+    "brand": "Custom Gauge",
+    "logo": "logo.png"
+  }
 }
