@@ -1,30 +1,37 @@
+/**
+ * Custom Gauge Card for Home Assistant
+ * Version: 1.1.0
+ * date: 2025-05-30
+ * Repository: https://github.com/HeWeDe/custom-gauge-card
+ * Author: HeWeDe (https://github.com/HeWeDe)
+ * License: MIT
+ */
 import { LitElement, html, css, svg } from "https://unpkg.com/lit-element/lit-element.js?module";
-
 const DEFAULTS = {
-  strokeWidth: 30,                // Dicke des farbigen Bogens (Gauge)
-  needle_color: "black",          // Farbe der Hauptnadel (aktueller Wert)
-  needle_opacity: 0.7,            // Transparenz der Hauptnadel (0 = unsichtbar, 1 = voll sichtbar)
+  strokeWidth: 30,                // Thickness of the colored arc (gauge)
+  needle_color: "black",          // Color of the main needle (current value)
+  needle_opacity: 0.7,            // Opacity of the main needle (0 = invisible, 1 = fully visible)
 
-  titel_font_size: 15,            // Schriftgröße für den Titel oben
-  value_font_size: 20,            // Schriftgröße für den zentralen Wert (in der Mitte)
-  rltext_font_size: 12,           // Schriftgröße für die Texte links/rechts unten
-  tick_font_size: 10,             // Schriftgröße für die Ticks (Skalenbeschriftung)
+  titel_font_size: 15,            // Font size for the title at the top
+  value_font_size: 18,            // Font size for the central value (middle of the gauge)
+  rltext_font_size: 12,           // Font size for the left/right bottom texts
+  tick_font_size: 10,             // Font size for the tick labels (scale)
 
-  ticks_count: 10,                // Anzahl der Ticks (Skalenstriche + Beschriftung)
-  tick_color: "rgb(120, 120, 120)", // Farbe der Tick-Linien
-  tick_width: 1,                  // Strichstärke der Tick-Linien
-  tick_stroke_inner: 0.5,         // Verhältnis zur Bogenbreite: wie weit der Tick nach innen geht
-  tick_stroke_outer: 0.2,         // Verhältnis zur Bogenbreite: wie weit der Tick nach außen geht
+  ticks_count: 10,                // Number of ticks (scale lines + labels)
+  tick_color: "rgb(120, 120, 120)", // Color of the tick lines
+  tick_width: 1,                  // Stroke width of the tick lines
+  tick_stroke_inner: 0.5,         // Relative to arc width: how far the tick goes inward
+  tick_stroke_outer: 0.2,         // Relative to arc width: how far the tick goes outward
 
-  decimal_separator: ",",         // Trennzeichen bei Dezimalzahlen (z.B. Komma oder Punkt)
-  decimals: 3,                    // Nachkommastellen für den **aktuellen Wert** (Mitte der Gauge)
+  decimal_separator: ",",         // Decimal separator for numbers (e.g., comma or period)
+  decimals: 3,                    // Decimal places for the **current value** (center of the gauge)
 
-  min_color: "blue",              // Farbe des Min-Markers (kleine Linie + Zahl)
-  max_color: "darkred",           // Farbe des Max-Markers
-  avg_color: "darkorange",            // Farbe des Durchschnitts-Markers
+  min_color: "blue",              // Color of the min marker (small line + value)
+  max_color: "darkred",           // Color of the max marker
+  avg_color: "darkorange",        // Color of the average marker
 
-  stat_decimals: 1,               // Nachkommastellen für Min/Max/Avg-Werte (Marker-Beschriftung)
-  markers_width: 2,               // Linienstärke der Min/Max/Avg-Marker
+  stat_decimals: 1,               // Decimal places for min/max/avg values (marker labels)
+  markers_width: 2,               // Line thickness for min/max/avg markers
 };
 
 function handleClick(card, hass, config, ev) {
@@ -56,31 +63,36 @@ class CustomGaugeCard extends LitElement {
       config: {},
     };
   }
-
-  static get styles() {
-    return css`
-      :host {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-        padding: 16px;
-        border: 1px solid var(--divider-color, #d3d3d3);
-        border-radius: var(--ha-card-border-radius, 12px);
-        background: var(--ha-card-background, white);
-        position: relative;
-      }
-    `;
+  static styles = css`
+  ha-card {
+    padding: 16px;
+    height: 100%; /* wichtig */
   }
-
+  .card-content {
+    min-height: 300px; /* z. B. ca. 4 Grid-Zeilen */
+  }
+`;
   setConfig(config) {
+    if (!config.entity) {
+      throw new Error("You need to define an entity");
+    }
     this.config = {
       tap_action: { action: "more-info" },
       ...DEFAULTS,
       ...config,
+    };
+  }
+
+  getCardSize() {
+    return 3;
+  }
+
+  getGridOptions() {
+    return {
+      rows: 4,
+      columns: 12,
+      min_rows: 2,
+      max_rows: 6,
     };
   }
 
@@ -94,21 +106,23 @@ class CustomGaugeCard extends LitElement {
     const unit = this.hass?.states?.[entity]?.attributes?.unit_of_measurement ?? "";
 
     return html`
-      <div
-        style="position: relative; width: 100%; cursor: pointer;"
-        @click=${(ev) => this._handleAction(ev)}
-        @contextmenu=${(ev) => this._handleAction(ev)}
-        @dblclick=${(ev) => this._handleAction(ev)}
-      >
-        ${this._renderGauge(gradient, min, max, name, entity, state, unit)}
-      </div>
+      <ha-card
+          style="cursor: pointer;"
+          @click=${(ev) => this._handleAction(ev)}
+          @contextmenu=${(ev) => this._handleAction(ev)}
+          @dblclick=${(ev) => this._handleAction(ev)}
+        >
+          <div>
+          ${this._renderGauge(gradient, min, max, name, entity, state, unit)}
+        </div>
+      </ha-card>
     `;
   }
 
   _renderGauge(gradient, min, max, name, entity, state, unit) {
     const radius = 90;
     const cx = 120;
-    const cy = 130;
+    const cy = 140;
     const cfg = this.config;
 
     const formatNumber = (num, dec = cfg.decimals) => {
@@ -137,13 +151,70 @@ class CustomGaugeCard extends LitElement {
       </g>
     `;
 
+    const extraNeedles = (cfg.needles ?? []).map((n) => {
+      const s = this.hass?.states?.[n.entity]?.state;
+      if (!s || s === undefined) return null;
+      const v = parseFloat(s);
+      if (isNaN(v)) return null;
+
+      const a = this._valueToAngle(v, min, max);
+      const needleLength = radius + cfg.strokeWidth / 2;
+      const needleBaseOffset = radius * 0.6;
+      const needleWidth = 10;
+
+      const points = [
+        `0,${-needleLength}`,
+        `${-needleWidth / 2},${-needleBaseOffset}`,
+        `${needleWidth / 2},${-needleBaseOffset}`,
+      ].join(" ");
+
+      const color = n.color || 'gray';
+      const opacity = n.opacity ?? 0.5;
+
+      const showValue = n.show_value ?? false;
+      const decimals = n.decimal ?? cfg.stat_decimals;
+      const valueText = formatNumber(v, decimals);
+      const label = this._polarToCartesian(cx, cy, radius + cfg.strokeWidth / 2 + 18, a);
+
+      return svg`
+        <g>
+          <g transform="translate(${cx}, ${cy}) rotate(${a})" style="transition: transform 0.6s ease;">
+            <polygon points="${points}" fill="${color}" opacity="${opacity}" />
+          </g>
+          ${showValue
+            ? svg`<text x="${label.x}" y="${label.y}" text-anchor="middle" font-size="${cfg.tick_font_size}" fill="${color}" dominant-baseline="middle">${valueText}</text>`
+            : null}
+        </g>
+      `;
+    }).filter(Boolean);
+
+    const needleInfoTexts = (cfg.needles ?? []).map((n, i) => {
+      const state = this.hass?.states?.[n.entity]?.state;
+      if (state === undefined || !n.show_value) return null;
+
+      const val = parseFloat(state);
+      if (isNaN(val)) return null;
+
+      const label = n.label ?? n.entity;
+      const color = n.color ?? "gray";
+      const dec = n.decimal ?? 1;
+      const yOffset = 10 + i * 14;
+      const xOffset = -10;
+      return svg`
+        <text x="${xOffset}" y="${yOffset}" font-size="${cfg.tick_font_size}" fill="${color}" text-anchor="start">
+          ${label}: ${formatNumber(val, dec)}
+        </text>
+      `;
+    });
+
+
     const ticks = [];
     for (let i = 0; i <= cfg.ticks_count; i++) {
       const val = min + (i * (max - min)) / cfg.ticks_count;
       const tickAngle = this._valueToAngle(val, min, max);
       const inner = this._polarToCartesian(cx, cy, radius - cfg.strokeWidth * cfg.tick_stroke_inner, tickAngle);
       const outer = this._polarToCartesian(cx, cy, radius + cfg.strokeWidth * cfg.tick_stroke_outer, tickAngle);
-      const label = this._polarToCartesian(cx, cy, radius - cfg.strokeWidth / 2 - 10, tickAngle);
+      const label = this._polarToCartesian(cx, cy, radius - cfg.strokeWidth / 2 - 12, tickAngle);
       const labelText = Number.isInteger(val) ? val.toString() : val.toFixed(1);
 
       if (i !== 0 && i !== cfg.ticks_count) {
@@ -162,7 +233,7 @@ class CustomGaugeCard extends LitElement {
       const tickAngle = this._valueToAngle(val, min, max);
       const inner = this._polarToCartesian(cx, cy, radius - cfg.strokeWidth * 0.5, tickAngle);
       const outer = this._polarToCartesian(cx, cy, radius + cfg.strokeWidth * 0.5, tickAngle);
-      const label = this._polarToCartesian(cx, cy, radius - cfg.strokeWidth / 2 +37, tickAngle);
+      const label = this._polarToCartesian(cx, cy, radius + cfg.strokeWidth / 2 + 10, tickAngle);
       const pos = this._polarToCartesian(cx, cy, radius - cfg.strokeWidth * cfg.tick_stroke_inner, tickAngle);
       return svg`
         <g>
@@ -183,15 +254,13 @@ class CustomGaugeCard extends LitElement {
     const rightPos = this._polarToCartesian(cx, cy, radius, 100);
 
     return html`
-      <div style="position: relative; width: 100%; padding-bottom: 75%;">
         <svg viewBox="0 0 240 180" style="position: absolute; width: 100%; height: 100%; top: 7%; left: 0;">
-          ${paths} ${ticks} ${statMarkers} ${needle}
-          <text x="${cx}" y="${cfg.titel_font_size}" text-anchor="middle" font-size="${cfg.titel_font_size}" font-weight="bold">${name}</text>
+          ${paths} ${ticks} ${statMarkers} ${extraNeedles} ${needleInfoTexts} ${needle}
+          <text x="${cx}" y="${cfg.titel_font_size*0.75}" text-anchor="middle" font-size="${cfg.titel_font_size}" font-weight="bold">${name}</text>
           <text x="${cx}" y="${cy + 10}" text-anchor="middle" font-size="${cfg.value_font_size}" font-weight="bold">${formattedValue} ${unit}</text>
           <text x="${leftPos.x}" y="${leftPos.y}" text-anchor="middle" font-size="${cfg.rltext_font_size}">${cfg.leftText}</text>
           <text x="${rightPos.x}" y="${rightPos.y}" text-anchor="middle" font-size="${cfg.rltext_font_size}">${cfg.rightText}</text>
         </svg>
-      </div>
     `;
   }
 
