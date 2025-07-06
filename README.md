@@ -18,8 +18,10 @@ Displays a value from a sensor with custom styling, colored arcs, dynamic thresh
 * Tick marks and labels
 * Customizable needle color, opacity, and thickness
 * Min/Max/Avg markers with values (requires statistics sensors)
+* Multiple needles (e.g., for comparing values)
 * Configurable formatting (decimals, separator, font sizes)
 * Optional tap action (`more-info` by default)
+* Optional hiding of needle for special values (e.g., battery full, overcharge)
 
 ---
 
@@ -28,11 +30,22 @@ Displays a value from a sensor with custom styling, colored arcs, dynamic thresh
 1. Copy `custom-gauge-card.js` into your `www/` directory inside Home Assistant config
 2. Add to `configuration.yaml` or use the UI:
 
+### yaml:
 ```yaml
 resources:
   - url: /local/custom-gauge-card.js
     type: module
 ```
+
+### UI:
+
+Add the card as a resource in the Home Assistant UI:
+
+   - Go to **Settings** → **Dashboards**.
+   - Click the **⋮ (three dots)** in the top right corner → **Resources**.
+   - Click **Add Resource**.
+   - Enter the URL: `/local/custom-gauge-card.js`
+   - Select **JavaScript Module** as the type.
 
 3. Restart Home Assistant or reload resources
 
@@ -90,7 +103,21 @@ tap_action:
   action: more-info
 ```
 
----
+### Multiple Needles
+
+```yaml
+needles:
+  - entity: sensor.load_power_today
+    color: "#0077cc"
+    opacity: 0.6
+    show_value: true
+    decimal: 2
+  - entity: sensor.load_power_yesterday
+    color: green
+    opacity: 0.4
+    show_value: true
+    decimal: 1
+```
 
 ## Example `sensor.yaml` entries for statistics:
 
@@ -151,6 +178,12 @@ Make sure the base entity has `state_class: measurement` set in its attributes.
 | `tick_font_size`    | Font size for tick labels                       |
 | `rltext_font_size`  | Font size for left/right labels                 |
 | `tap_action`        | Tap interaction (`more-info`, `navigate`, etc.) |
+| `needles`           | Array of additional needles                     |
+| → `entity`          | Entity for the additional needle                |
+| → `color`           | Color of this needle                            |
+| → `opacity`         | Opacity (0.0–1.0)                               |
+| → `show_value`      | Show value next to needle (true/false)          |
+| → `decimal`         | Number of decimal places for value label        |
 
 ---
 
@@ -183,15 +216,13 @@ Developed by [HeWeDe](https://github.com/HeWeDe) with support from ChatGPT 🤖
 * `apexcharts-card`
 * `button-card`
 
-## 📁 Beispiele
+## 📁 Examples
 
-Im Ordner [`example/`](./example) findest du praktische Konfigurationsbeispiele aus einem produktiven Home Assistant-Setup:
+The [`example/`](./example) folder contains real-world YAML snippets:
 
-| Datei              | Inhalt                                                                 |
-|-------------------|------------------------------------------------------------------------|
-| `configuration.yaml` | Basis-Setup mit Includes für Sensoren, Templates, Automationen       |
-| `sensor.yaml`         | Statistiksensoren für Verbrauch, Akku und mehr                       |
-| `template.yaml`       | Beispielhafte Berechnung der Inverter-Verlustleistung                |
-| `automations.yaml`    | Automatisierung zur Berechnung der tatsächlichen Akkukapazität       |
-
-Alle Beispiele sind sofort nutzbar oder leicht anpassbar.
+| File                | Description                                                   |
+|---------------------|---------------------------------------------------------------|
+| `configuration.yaml` | Base configuration with includes                              |
+| `sensor.yaml`         | Statistics sensors for load, solar, battery, etc.            |
+| `template.yaml`       | Example template sensor for inverter loss power              |
+| `automations.yaml`    | Daily automation for battery capacity tracking               |
